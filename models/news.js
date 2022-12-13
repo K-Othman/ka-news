@@ -5,3 +5,19 @@ exports.selectTopics = () => {
     return rows;
   });
 };
+
+exports.selectArticles = () => {
+  return db
+    .query(
+      "SELECT articles.author, articles.title, articles.topic, articles.created_at, articles.votes, comments.article_id,CAST(COUNT(comments.article_id) AS int) as comment_count  FROM articles,comments GROUP BY articles.author, articles.title, articles.topic, articles.created_at, articles.votes, comments.article_id ORDER BY created_at DESC;"
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+// ORDER BY rating DESC;
+// CREATE VIEW vCombinedRecords AS
+// SELECT * FROM DB1.dbo.MyTable
+// UNION ALL
+// SELECT * FROM DB2.dbo.MyTable
