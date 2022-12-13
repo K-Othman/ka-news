@@ -15,9 +15,3 @@ exports.selectArticles = () => {
       return rows;
     });
 };
-
-// ORDER BY rating DESC;
-// CREATE VIEW vCombinedRecords AS
-// SELECT * FROM DB1.dbo.MyTable
-// UNION ALL
-// SELECT * FROM DB2.dbo.MyTable
