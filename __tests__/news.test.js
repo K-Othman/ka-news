@@ -30,14 +30,14 @@ describe("1. GET /api/topics", () => {
   });
 });
 
-describe("4. GET /api/articles", () => {
+describe.only("4. GET /api/articles", () => {
   test("status:200, responds with an array of articles objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles.length).toBe(60);
+        expect(articles.length).toBe(12);
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -101,32 +101,6 @@ describe("4. GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles.inputDate).toEqual(articles.output);
-      });
-  });
-});
-
-describe("4. GET /api/articles/:article_id", () => {
-  test("status:200, responds with an array of articles objects", () => {
-    const article_id = 9;
-    return request(app)
-      .get(`/api/articles/${article_id}`)
-      .expect(200)
-      .then(({ body }) => {
-        const { articles } = body;
-        expect(articles.length).toBe(12);
-        articles.forEach((article) => {
-          expect(article).toEqual(
-            expect.objectContaining({
-              author: expect.any(String),
-              title: expect.any(String),
-              article_id: article_id,
-              body: expect.any(String),
-              topic: expect.any(String),
-              created_at: expect.any(String),
-              votes: expect.any(Number),
-            })
-          );
-        });
       });
   });
 });
