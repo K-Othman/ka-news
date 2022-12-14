@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const jestSorted = require("jest-sorted");
 
 afterAll(() => {
   if (db.end) return db.end();
@@ -30,7 +31,7 @@ describe("1. GET /api/topics", () => {
   });
 });
 
-describe.only("4. GET /api/articles", () => {
+describe("4. GET /api/articles", () => {
   test("status:200, responds with an array of articles objects", () => {
     return request(app)
       .get("/api/articles")
@@ -54,53 +55,12 @@ describe.only("4. GET /api/articles", () => {
       });
   });
   test("status:200, responds with an array of articles objects and the date in descending order", () => {
-    const inputDate = [
-      {
-        author: "icellusedkars",
-        title: "Z",
-        topic: "mitch",
-        created_at: "2020-01-07T14:08:00.000Z",
-        votes: 0,
-        article_id: 1,
-        comment_count: 11,
-      },
-      {
-        author: "rogersop",
-        title: "UNCOVERED: catspiracy to bring down democracy",
-        topic: "cats",
-        created_at: "2020-08-03T13:14:00.000Z",
-        votes: 0,
-        article_id: 1,
-        comment_count: 11,
-      },
-    ];
-    const output = [
-      {
-        author: "rogersop",
-        title: "UNCOVERED: catspiracy to bring down democracy",
-        topic: "cats",
-        created_at: "2020-08-03T13:14:00.000Z",
-        votes: 0,
-        article_id: 1,
-        comment_count: 11,
-      },
-      {
-        author: "icellusedkars",
-        title: "Z",
-        topic: "mitch",
-        created_at: "2020-01-07T14:08:00.000Z",
-        votes: 0,
-        article_id: 1,
-        comment_count: 11,
-      },
-    ];
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .send(output)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles.inputDate).toEqual(articles.output);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
