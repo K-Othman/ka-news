@@ -16,13 +16,13 @@ exports.selectArticles = () => {
     });
 };
 
-// exports.selectArticlesId = (articleId) => {
-//   return db
-//     .query(
-//       "SELECT articles.author, articles.title, comments.article_id , articles.body, articles.topic, articles.created_at, articles.votes, comments GROUP BY articles.author, articles.title, comments.article_id, articles.body, articles.topic, articles.created_at, articles.votes WHERE article_id = $1;",
-//       [articleId]
-//     )
-//     .then(({ rows }) => {
-//       console.log(rows);
-//     });
-// };
+exports.selectArticlesId = (articleId) => {
+  return db
+    .query(
+      "SELECT articles.author, articles.title, articles.body, articles.topic, articles.created_at, articles.votes, comments.article_id FROM articles,comments WHERE comments.article_id = $1 GROUP BY articles.author, articles.title, comments.article_id, articles.body, articles.topic, articles.created_at, articles.votes ;",
+      [articleId]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
