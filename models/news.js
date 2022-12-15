@@ -15,3 +15,20 @@ exports.selectArticles = () => {
       return rows;
     });
 };
+
+exports.selectArticlesById = (articleId) => {
+  return db
+    .query("SELECT articles.* FROM articles  WHERE article_id = $1;", [
+      articleId,
+    ])
+    .then(({ rows }) => {
+      const article = rows[0];
+      if (!article) {
+        return Promise.reject({
+          status: 404,
+          msg: `Not Found`,
+        });
+      }
+      return article;
+    });
+};
