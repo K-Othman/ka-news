@@ -163,3 +163,34 @@ describe("6. GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("7. POST /api/articles/:article_id/comments", () => {
+  test("status:201, responds with comment newly added to the database", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Oh, I've got compassion running out of my nose, pal!",
+    };
+    return request(app)
+      .post(`/api/articles/3/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual({
+          article_id: 3,
+          body: expect.any(String),
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "butter_bridge",
+        });
+      });
+  });
+  test("400: response with bad request if article_id is not a number", () => {
+    return request(app)
+      .get(`/api/articles/dog/comments`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+});

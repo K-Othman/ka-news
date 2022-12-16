@@ -1,11 +1,15 @@
 const express = require("express");
+
 const app = express();
 const {
   getTopics,
   getArticles,
   getArticlesById,
   getCommentsByArticles_Id,
+  postComment,
 } = require("./controllers/news");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
@@ -13,6 +17,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticles_Id);
+
+app.post("/api/articles/:article_id/comments", postComment);
 
 // ERRORS HANDLING
 

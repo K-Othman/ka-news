@@ -3,6 +3,7 @@ const {
   selectArticles,
   selectArticlesById,
   selectComment,
+  insertComment,
 } = require("../models/news");
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -34,5 +35,14 @@ exports.getCommentsByArticles_Id = (req, res, next) => {
     .then((comments) => {
       res.status(200).send({ comments });
     })
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const articleId = req.params.article_id;
+  const newComment = req.body;
+
+  insertComment(newComment, articleId)
+    .then((comment) => res.status(201).send({ comment }))
     .catch(next);
 };
