@@ -185,7 +185,40 @@ describe("7. POST /api/articles/:article_id/comments", () => {
         });
       });
   });
+
+  test("404: response with not found for non existent article_id", () => {
+    return request(app)
+      .get(`/api/articles/1000/comments`)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not Found");
+      });
+  });
   test("400: response with bad request if article_id is not a number", () => {
+    return request(app)
+      .get(`/api/articles/dog/comments`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("400: response with bad request if user is not a number", () => {
+    const newComment = {
+      username: "",
+      body: "Oh, I've got compassion running out of my nose, pal!",
+    };
+    return request(app)
+      .get(`/api/articles/dog/comments`)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("400: response with bad request if article_id is not a number", () => {
+    const newComment = {
+      username: "Karim",
+      body: "Oh, I've got compassion running out of my nose, pal!",
+    };
     return request(app)
       .get(`/api/articles/dog/comments`)
       .expect(400)
