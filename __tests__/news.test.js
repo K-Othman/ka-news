@@ -214,7 +214,7 @@ describe("7. POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("400: response with bad request if article_id is not a number", () => {
+  test("404: response with bad request if article_id is not a number", () => {
     const newComment = {
       username: "Karim",
       body: "Oh, I've got compassion running out of my nose, pal!",
