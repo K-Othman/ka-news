@@ -36,7 +36,7 @@ exports.selectArticlesById = (articleId) => {
 exports.selectComment = (articleId) => {
   return db
     .query(
-      "SELECT comments.votes, comments.created_at, comments.author, comments.body, comments.article_id as comment_id FROM comments WHERE comments.article_id = $1 ORDER BY created_at DESC;",
+      "SELECT comments.votes, comments.created_at, comments.author, comments.body, comments.article_id as comment_id FROM comments WHERE comments.article_id = $1 GROUP BY comments.votes, comments.created_at, comments.author, comments.body, comments.article_id ORDER BY created_at DESC;",
       [articleId]
     )
     .then(({ rows }) => {
@@ -45,25 +45,6 @@ exports.selectComment = (articleId) => {
     });
 };
 
-exports.insertComment = (newComment, articleId) => {
-  const { body, username } = newComment;
-  return db
-    .query(
-      `INSERT INTO COMMENTS (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;`,
-      [body, username, articleId]
-    )
-    .then((comment) => {
-      return comment.rows[0];
-    });
-};
-
-exports.updateVotesById = (newVotes, article_id) => {
-  return db
-    .query(
-      "UPDATE articles SET votes = articles.votes + $1  WHERE article_id = $2 RETURNING *;",
-      [newVotes, article_id]
-    )
-    .then((result) => {
-      return result.rows[0];
-    });
-};
+// if (comments.length === 0 && article) {
+//   return [];
+// }
