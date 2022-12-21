@@ -171,14 +171,14 @@ describe("7. POST /api/articles/:article_id/comments", () => {
       body: "Oh, I've got compassion running out of my nose, pal!",
     };
     return request(app)
-      .post(`/api/articles/3/comments`)
+      .post(`/api/articles/9/comments`)
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
         expect(body.comment).toEqual({
-          article_id: 3,
-          body: expect.any(String),
+          article_id: 9,
           comment_id: expect.any(Number),
+          body: "Oh, I've got compassion running out of my nose, pal!",
           votes: expect.any(Number),
           created_at: expect.any(String),
           author: "butter_bridge",
@@ -187,40 +187,134 @@ describe("7. POST /api/articles/:article_id/comments", () => {
   });
 
   test("404: response with not found for non existent article_id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Oh, I've got compassion running out of my nose, pal!",
+    };
     return request(app)
-      .get(`/api/articles/1000/comments`)
+      .post(`/api/articles/1000/comments`)
       .expect(404)
+      .send(newComment)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Not Found");
       });
   });
   test("400: response with bad request if article_id is not a number", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Oh, I've got compassion running out of my nose, pal!",
+    };
     return request(app)
-      .get(`/api/articles/dog/comments`)
+      .post(`/api/articles/dog/comments`)
+      .send(newComment)
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("400: response with bad request if user is not a number", () => {
+  test("404: response with not found if username does not exist", () => {
     const newComment = {
-      username: "",
+      username: "Anything",
       body: "Oh, I've got compassion running out of my nose, pal!",
     };
     return request(app)
-      .get(`/api/articles/dog/comments`)
+      .post(`/api/articles/9/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("8. PATCH /api/articles/:article_id", () => {
+  test("status:200, should increment selected articles's votes by the given number and return the updated review", () => {
+    const articleUpdates = {
+      inc_votes: 100,
+    };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(articleUpdates)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "some gifs",
+          created_at: expect.any(String),
+          votes: 100,
+        });
+      });
+  });
+  test("status:200, should increment selected articles's votes by the given number and return the updated review", () => {
+    const articleUpdates = {
+      inc_votes: -70,
+    };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(articleUpdates)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "some gifs",
+          created_at: expect.any(String),
+          votes: -70,
+        });
+      });
+  });
+  test("status:200, selected article's votes should stay the same if no new votes added", () => {
+    const articleUpdates = {
+      inc_votes: 0,
+    };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(articleUpdates)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          article_id: 3,
+          title: "Eight pug gifs that remind me of mitch",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "some gifs",
+          created_at: expect.any(String),
+          votes: 0,
+        });
+      });
+  });
+  test("400: bad request, when incorrect property posted", () => {
+    const articleUpdates = { votes: 1 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(articleUpdates)
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("404: response with bad request if article_id is not a number", () => {
-    const newComment = {
-      username: "Karim",
-      body: "Oh, I've got compassion running out of my nose, pal!",
+  test("404: response with not found for non existent article_id", () => {
+    const articleUpdates = {
+      inc_votes: 1,
     };
     return request(app)
-      .get(`/api/articles/dog/comments`)
+      .patch("/api/articles/1000")
+      .send(articleUpdates)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not Found");
+      });
+  });
+  test("400: bad request, when incorrect property posted", () => {
+    const articleUpdates = { votes: "a" };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(articleUpdates)
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");

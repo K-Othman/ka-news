@@ -4,6 +4,7 @@ const {
   selectArticlesById,
   selectComment,
   insertComment,
+  updateVotesById,
 } = require("../models/news");
 exports.getTopics = (req, res) => {
   selectTopics().then((topics) => {
@@ -44,5 +45,17 @@ exports.postComment = (req, res, next) => {
 
   insertComment(newComment, articleId)
     .then((comment) => res.status(201).send({ comment }))
+    .catch(next);
+};
+
+exports.patchVotesByArticleId = (req, res, next) => {
+  const article_id = req.params.article_id;
+  const newVotes = req.body.inc_votes;
+
+  selectArticlesById(article_id)
+    .then(() => {
+      return updateVotesById(newVotes, article_id);
+    })
+    .then((votes) => res.status(200).send(votes))
     .catch(next);
 };

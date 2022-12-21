@@ -56,3 +56,14 @@ exports.insertComment = (newComment, articleId) => {
       return comment.rows[0];
     });
 };
+
+exports.updateVotesById = (newVotes, article_id) => {
+  return db
+    .query(
+      "UPDATE articles SET votes = articles.votes + $1  WHERE article_id = $2 RETURNING *;",
+      [newVotes, article_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
