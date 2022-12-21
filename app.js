@@ -1,11 +1,22 @@
 const express = require("express");
+
 const app = express();
 const {
   getTopics,
   getArticles,
   getArticlesById,
   getCommentsByArticles_Id,
+  postComment,
+  patchVotesByArticleId,
 } = require("./controllers/news");
+const {
+  handle404,
+  handle500,
+  handleCustom,
+  handlePSQLErrors,
+} = require("./controllers/errors.controllers");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
@@ -14,22 +25,18 @@ app.get("/api/articles/:article_id", getArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticles_Id);
 
+app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", patchVotesByArticleId);
+app.all("*", handle404);
+
 // ERRORS HANDLING
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "Bad request" });
-  } else next(err);
-});
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
-  } else next(err);
-});
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ msg: "Internal Server Error" });
-});
+// psql errors
+app.use(handlePSQLErrors);
+// custom errors
+app.use(handleCustom);
+// server errors
+app.use(handle500);
 
 module.exports = app;
