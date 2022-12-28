@@ -8,6 +8,7 @@ const {
   getCommentsByArticles_Id,
   postComment,
   patchVotesByArticleId,
+  getUsers,
 } = require("./controllers/news");
 const {
   handle404,
@@ -28,9 +29,11 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticles_Id);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchVotesByArticleId);
-app.all("*", handle404);
+
+app.get("/api/users", getUsers);
 
 // ERRORS HANDLING
+app.all("*", handle404);
 
 // psql errors
 app.use(handlePSQLErrors);
