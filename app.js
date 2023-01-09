@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 
-app.use(cors());
-
 const app = express();
 const {
   getTopics,
@@ -20,6 +18,7 @@ const {
   handlePSQLErrors,
 } = require("./controllers/errors.controllers");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
