@@ -10,6 +10,7 @@ const {
   postComment,
   patchVotesByArticleId,
   getUsers,
+  deleteComment,
 } = require("./controllers/news");
 const {
   handle404,
@@ -34,6 +35,7 @@ app.patch("/api/articles/:article_id", patchVotesByArticleId);
 
 app.get("/api/users", getUsers);
 
+app.delete("/api/comments/:comment_id", deleteComment);
 // ERRORS HANDLING
 app.all("*", handle404);
 
